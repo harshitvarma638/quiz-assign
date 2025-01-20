@@ -16,7 +16,7 @@ export default function Home() {
       return;
     }
 
-    setQuizData({name, email, selectedAnswers: []});
+    setQuizData({name, email, selectedAnswers: [], currentQuestion: 0, seenQuestions: []});
     console.log(quizData);
     router.push('/Instructions');
   }
