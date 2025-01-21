@@ -31,5 +31,10 @@ Challenges Faced
 - The marking of seen, attempted was tough as I thought of using non-persistent method but later used the exisitng useContext and added
 seenQuestions to mark the viewed questions by the user.
 
+Bonus features Added
+- Made it mobile responsive
+- Added framer motion transition for the question navigation similar to typeform.
+- Persistent quiz data it will sustain page refreshes with help of local storage.
+
 
 
