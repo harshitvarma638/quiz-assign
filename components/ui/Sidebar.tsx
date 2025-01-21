@@ -3,7 +3,11 @@ import { Menu, X } from 'lucide-react';
 import { useQuiz } from '@/useContext/useContext';
 
 export default function Sidebar() {
-    const {quizData,setQuizData, setCurrentQuestion} = useQuiz();
+    const { 
+        quizData,
+        setQuizData,
+        setCurrentQuestion
+    } = useQuiz();
     const [open, setOpen] = useState(false);
 
     const handleQuestionClick = (index: number) => {

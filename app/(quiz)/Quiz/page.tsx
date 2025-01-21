@@ -5,6 +5,13 @@ import {Check} from "lucide-react";
 import Sidebar from "@/components/ui/Sidebar";
 import { useQuiz } from "@/useContext/useContext";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+
+const questionVariants = {
+    enter: { opacity: 0, y: 50 },
+    center: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -50 },
+};
 
 export default function Quiz() {
     // const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -154,81 +161,93 @@ export default function Quiz() {
                     ) : (
                         <form>
                             <div className="flex flex-col space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-xl font-semibold">
-                                        {(quizData.currentQuestion)+1} - {quizData.questions[quizData.currentQuestion].question}
-                                    </h2>
-                                    <h2 
-                                        className={`text-sm font-bold px-3 py-2 rounded-lg ${
-                                            quizData.questions[quizData.currentQuestion].difficulty === "easy"
-                                            ? "bg-green-400"
-                                            : quizData.questions[quizData.currentQuestion].difficulty === "medium"
-                                            ? "bg-orange-400"
-                                            : "bg-red-500"
-                                    }`}>{quizData.questions[quizData.currentQuestion].difficulty}</h2>
-                                </div>
-                                <div
-                                    className="space-y-2"
-                                    style={{ width: 'fit-content', minWidth: '25%' }}
+                                <AnimatePresence mode="wait">
+                                <motion.div
+                                key={quizData.currentQuestion}
+                                variants={questionVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.4, ease: "easeInOut" }}
+                                className="flex flex-col space-y-4"
                                 >
-                                    {options.map((option, index) => (
-                                        <label
-                                            key={option}
-                                            className={`flex items-center justify-between min-w-1/4 space-x-3 cursor-pointer rounded-md border-[1px] p-2`}
-                                            style={{
-                                                backgroundColor: `rgba(36,62,142, 0.1)`,
-                                                boxShadow: `inset 0px 0px 0px 1px rgba(36,62,142, 0.6)`,
-                                            }}
-                                        >
-                                            <span
-                                                className={`flex items-center text-sm font-medium px-2 h-6 border-[1px] bg-white rounded-sm`}
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-xl font-semibold">
+                                            {(quizData.currentQuestion)+1} - {quizData.questions[quizData.currentQuestion].question}
+                                        </h2>
+                                        <h2 
+                                            className={`text-sm font-bold px-3 py-2 rounded-lg ${
+                                                quizData.questions[quizData.currentQuestion].difficulty === "easy"
+                                                ? "bg-green-400"
+                                                : quizData.questions[quizData.currentQuestion].difficulty === "medium"
+                                                ? "bg-orange-400"
+                                                : "bg-red-500"
+                                        }`}>{quizData.questions[quizData.currentQuestion].difficulty}</h2>
+                                    </div>
+                                    <div
+                                        className="space-y-2"
+                                        style={{ width: 'fit-content', minWidth: '25%' }}
+                                    >
+                                        {options.map((option, index) => (
+                                            <label
+                                                key={option}
+                                                className={`flex items-center justify-between min-w-1/4 space-x-3 cursor-pointer rounded-md border-[1px] p-2`}
                                                 style={{
-                                                    color: '#243e8e',
-                                                    borderColor: '#243e8e',
+                                                    backgroundColor: `rgba(36,62,142, 0.1)`,
+                                                    boxShadow: `inset 0px 0px 0px 1px rgba(36,62,142, 0.6)`,
                                                 }}
                                             >
-                                                {String.fromCharCode(65 + index)}
-                                            </span>
-                                            <span
-                                                className="text-md items-center w-full font-medium min-h-6 h-auto"
-                                                style={{
-                                                    color: '#000000',
-                                                    borderColor: '#000000',
-                                                }}
-                                            >
-                                                {option}
-                                            </span>
-                                            <div className="flex relative">
-                                                <input
-                                                    type="radio"
-                                                    name={quizData.questions[quizData.currentQuestion]}
-                                                    value={option}
-                                                    checked={
-                                                        quizData.selectedAnswers.some(
-                                                          (answer) =>
-                                                            answer.question === quizData.questions[quizData.currentQuestion].question &&
-                                                            answer.selectedOption === option
-                                                        )
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleOptionChange(e.target.value)
-                                                    }
-                                                    className="appearance-none w-5 h-5 rounded-full focus:outline-none"
-                                                />
-                                                {quizData.selectedAnswers.some(
-                                                    (answer) =>
-                                                    answer.question === quizData.questions[quizData.currentQuestion].question &&
-                                                    answer.selectedOption === option
-                                                ) && (
-                                                    <Check
-                                                        className="absolute top-0 left-0 w-5 h-5 transition duration-200"
-                                                        style={{ color: '#243e8e' }}
+                                                <span
+                                                    className={`flex items-center text-sm font-medium px-2 h-6 border-[1px] bg-white rounded-sm`}
+                                                    style={{
+                                                        color: '#243e8e',
+                                                        borderColor: '#243e8e',
+                                                    }}
+                                                >
+                                                    {String.fromCharCode(65 + index)}
+                                                </span>
+                                                <span
+                                                    className="text-md items-center w-full font-medium min-h-6 h-auto"
+                                                    style={{
+                                                        color: '#000000',
+                                                        borderColor: '#000000',
+                                                    }}
+                                                >
+                                                    {option}
+                                                </span>
+                                                <div className="flex relative">
+                                                    <input
+                                                        type="radio"
+                                                        name={quizData.questions[quizData.currentQuestion]}
+                                                        value={option}
+                                                        checked={
+                                                            quizData.selectedAnswers.some(
+                                                            (answer) =>
+                                                                answer.question === quizData.questions[quizData.currentQuestion].question &&
+                                                                answer.selectedOption === option
+                                                            )
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleOptionChange(e.target.value)
+                                                        }
+                                                        className="appearance-none w-5 h-5 rounded-full focus:outline-none"
                                                     />
-                                                )}
-                                            </div>
-                                        </label>
-                                    ))}
-                                </div>
+                                                    {quizData.selectedAnswers.some(
+                                                        (answer) =>
+                                                        answer.question === quizData.questions[quizData.currentQuestion].question &&
+                                                        answer.selectedOption === option
+                                                    ) && (
+                                                        <Check
+                                                            className="absolute top-0 left-0 w-5 h-5 transition duration-200"
+                                                            style={{ color: '#243e8e' }}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                                </AnimatePresence>
                             </div>
                         </form>
                     )}
