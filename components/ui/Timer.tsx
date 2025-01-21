@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useQuiz } from "../../useContext/useContext";
 
 function Timer() {
-    const { timeLeft} = useQuiz();
+    const { timeLeft,quizData,setTimeLeft } = useQuiz();
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
+
+    useEffect(() => {
+        if (quizData.hasSubmitted) {
+            setTimeLeft(1800); // Reset to 30 minutes
+        }
+    }, [quizData.hasSubmitted, setTimeLeft]);
 
     return (
         <div>

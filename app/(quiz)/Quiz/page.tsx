@@ -4,29 +4,64 @@ import Navbar from "../../../components/ui/Navbar";
 import {Check} from "lucide-react";
 import Sidebar from "@/components/ui/Sidebar";
 import { useQuiz } from "@/useContext/useContext";
+import { useRouter } from "next/navigation";
 
 export default function Quiz() {
-    const [questions, setQuestions] = useState<any[]>([]);
     // const [currentQuestion, setCurrentQuestion] = useState(0);
     const [options, setOptions] = useState<string[]>([]);
     const [selectedOption, setSelectedOption] = useState("");
-    const {quizData,setQuizData, setCurrentQuestion} = useQuiz();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {quizData,setQuizData, setCurrentQuestion, timeLeft} = useQuiz();
+    const router = useRouter();
 
     useEffect(() => {
-        fetch("https://opentdb.com/api.php?amount=15")
-        .then((res) => res.json())
-        .then((data) => {
-            setQuestions(data.results);
-        });
-    }, []);
+        if (!quizData.questions || quizData.questions.length === 0) {
+            setIsLoading(true);
+            fetch("https://opentdb.com/api.php?amount=15")
+                .then((res) => res.json())
+                .then((data) => {
+                    setQuizData((prev) => ({
+                        ...prev,
+                        questions: data.results,
+                    }));
+                    setIsLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching questions:", error);
+                    setIsLoading(false);
+                });
+        } else {
+            setIsLoading(false);
+        }
+    }, [quizData.questions, setQuizData]);
 
     useEffect(() => {
-        if(questions.length > 0) {
-            const current = questions[quizData.currentQuestion];
+        if (quizData.questions && quizData.questions.length > 0) {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function () {
+                router.push("/Quiz");
+            };
+        }
+        if (quizData.hasSubmitted) {
+            router.push("/Results");
+        }
+    }, [quizData.questions, router, quizData.hasSubmitted]);
+
+    useEffect(() => {
+        if (quizData?.questions?.length > 0) {
+            const current = quizData.questions[quizData.currentQuestion];
             const allOptions = [...current.incorrect_answers, current.correct_answer];
             setOptions(shuffleOptions(allOptions));
         }
-    }, [questions, quizData.currentQuestion]);
+    }, [quizData.questions, quizData.currentQuestion]);
+
+    useEffect(() => {
+        if(timeLeft === 0) {
+            setQuizData((prev) => ({...prev, hasSubmitted: true}));
+            router.push("/Results");
+        }
+    }, [timeLeft, setQuizData, router]);
 
     const handleOptionChange = (option: string) => {
         setSelectedOption(option);
@@ -34,14 +69,14 @@ export default function Quiz() {
         setQuizData((prev) => {
             const updatedAnswers = [...prev.selectedAnswers];
             const existingAnswer = updatedAnswers.findIndex(
-                (answer) => answer.question === questions[quizData.currentQuestion].question
+                (answer) => answer.question === quizData?.questions[quizData.currentQuestion].question
             );
 
             if (existingAnswer !== -1) {
                 updatedAnswers[existingAnswer].selectedOption = option;
             } else {
                 updatedAnswers.push({
-                    question: questions[quizData.currentQuestion].question,
+                    question: quizData?.questions[quizData.currentQuestion].question,
                     selectedOption: option,
                 });
             }
@@ -60,15 +95,15 @@ export default function Quiz() {
     };
 
     const handleNext = () => {
-        if(quizData.currentQuestion < questions.length - 1) {
+        if(quizData.currentQuestion < quizData.questions.length - 1) {
             setQuizData((prev) => {
                 const seenQuestions = Array.isArray(quizData.seenQuestions) ? quizData.seenQuestions : [];
                 return {
                     ...prev,
-                    seenQuestions: [...new Set([...seenQuestions, questions[quizData.currentQuestion].question])]
+                    seenQuestions: [...new Set([...seenQuestions, quizData.questions[quizData.currentQuestion].question])]
                 };
             });
-            setCurrentQuestion(quizData.currentQuestion + 1);
+            setCurrentQuestion((quizData.currentQuestion) + 1);
         }
     };
 
@@ -78,43 +113,59 @@ export default function Quiz() {
                 const seenQuestions = Array.isArray(quizData.seenQuestions) ? quizData.seenQuestions : [];
                 return {
                     ...prev,
-                    seenQuestions: [...new Set([...seenQuestions, questions[quizData.currentQuestion].question])]
+                    seenQuestions: [...new Set([...seenQuestions, quizData.questions[quizData.currentQuestion].question])]
                 };
             });
-            setCurrentQuestion(quizData.currentQuestion - 1);
+            setCurrentQuestion((quizData.currentQuestion) - 1);
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("submitted");
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const confirmSubmit = () => {
+        setIsModalOpen(false);
+        setQuizData((prev) => ({
+            ...prev,
+            hasSubmitted: true,
+        }));
+        router.push("/Results");
     };
 
     return (
         <div className="flex flex-col min-h-screen">
-            <Sidebar 
-                questions={questions}
-            />
+            <Sidebar/>
             <main className="flex flex-col min-h-screen ml-16">  
                 <Navbar />
                 <div className="flex-grow p-4 m-4 border-2 border-gray-300 rounded-md overflow-auto">
-                    {questions && questions.length === 0 ? (
-                        <p>Loading questions...</p>
+                    {isLoading ? (
+                        <div className="flex items-center justify-center h-full">
+                            <p className="text-xl">Loading questions...</p>
+                        </div>
+                    ) : !quizData.questions || quizData.questions.length === 0 ? (
+                        <div className="flex items-center justify-center h-full">
+                            <p className="text-xl">No questions available. Please try again.</p>
+                        </div>
                     ) : (
-                        <form onSubmit={handleSubmit}>
+                        <form>
                             <div className="flex flex-col space-y-4">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-xl font-semibold">
-                                        {(quizData.currentQuestion)+1} - {questions[quizData.currentQuestion].question}
+                                        {(quizData.currentQuestion)+1} - {quizData.questions[quizData.currentQuestion].question}
                                     </h2>
                                     <h2 
                                         className={`text-sm font-bold px-3 py-2 rounded-lg ${
-                                            questions[quizData.currentQuestion].difficulty === "easy"
+                                            quizData.questions[quizData.currentQuestion].difficulty === "easy"
                                             ? "bg-green-400"
-                                            : questions[quizData.currentQuestion].difficulty === "medium"
+                                            : quizData.questions[quizData.currentQuestion].difficulty === "medium"
                                             ? "bg-orange-400"
                                             : "bg-red-500"
-                                    }`}>{questions[quizData.currentQuestion].difficulty}</h2>
+                                    }`}>{quizData.questions[quizData.currentQuestion].difficulty}</h2>
                                 </div>
                                 <div
                                     className="space-y-2"
@@ -150,12 +201,12 @@ export default function Quiz() {
                                             <div className="flex relative">
                                                 <input
                                                     type="radio"
-                                                    name={questions[quizData.currentQuestion]}
+                                                    name={quizData.questions[quizData.currentQuestion]}
                                                     value={option}
                                                     checked={
                                                         quizData.selectedAnswers.some(
                                                           (answer) =>
-                                                            answer.question === questions[quizData.currentQuestion].question &&
+                                                            answer.question === quizData.questions[quizData.currentQuestion].question &&
                                                             answer.selectedOption === option
                                                         )
                                                     }
@@ -166,7 +217,7 @@ export default function Quiz() {
                                                 />
                                                 {quizData.selectedAnswers.some(
                                                     (answer) =>
-                                                    answer.question === questions[quizData.currentQuestion].question &&
+                                                    answer.question === quizData.questions[quizData.currentQuestion].question &&
                                                     answer.selectedOption === option
                                                 ) && (
                                                     <Check
@@ -182,10 +233,12 @@ export default function Quiz() {
                         </form>
                     )}
                 </div>
+                {!isLoading && quizData.questions && quizData.questions.length > 0 && (
                 <div className="p-4 m-4 mt-2 flex flex-row justify-between items-center">
                     <div className="flex flex-row">
                         <button
                             type="submit"
+                            onClick={openModal}
                             className="px-4 py-2 bg-green-500 font-semibold rounded-lg"
                         >
                             Submit
@@ -217,14 +270,43 @@ export default function Quiz() {
                         <button
                             type="button"
                             onClick={handleNext}
-                            disabled={quizData.currentQuestion === questions.length - 1}
+                            disabled={quizData.currentQuestion === quizData.questions.length - 1}
                             className="px-4 py-2 bg-[#243e8e] font-semibold text-white border-2 rounded-lg disabled:opacity-50"
                         >
                             Next
                         </button>
                     </div>
                 </div>
+                )}
             </main>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+                        <h2 className="text-lg font-bold mb-4">Confirm Submission</h2>
+                        <p>Are you sure you want to submit the quiz?</p>
+                        <div className="flex flex-col mt-4 space-y-4">
+                            <h2 className="text-md font-semibold">Attempted - {quizData.selectedAnswers.length}</h2>
+                            <h2 className="text-md font-semibold">Unattempted - {quizData.questions.length - quizData.selectedAnswers.length}</h2>
+                            <h2 className="text-md font-semibold">Viewed - {quizData.seenQuestions.length}</h2>
+                        </div>
+                        <div className="mt-6 flex justify-end space-x-4">
+                            <button
+                                className="px-4 py-2 bg-gray-200 rounded-lg"
+                                onClick={closeModal}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-green-500 text-white rounded-lg"
+                                onClick={confirmSubmit}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );    
 }

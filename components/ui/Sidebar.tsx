@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useQuiz } from '@/useContext/useContext';
 
-interface SidebarProps {
-    questions: any[];
-}
-
-export default function Sidebar({ questions }: SidebarProps) {
+export default function Sidebar() {
     const {quizData,setQuizData, setCurrentQuestion} = useQuiz();
     const [open, setOpen] = useState(false);
 
@@ -16,7 +12,7 @@ export default function Sidebar({ questions }: SidebarProps) {
             const seenQuestions = Array.isArray(quizData.seenQuestions) ? quizData.seenQuestions : [];
             return {
                 ...prev,
-                seenQuestions: [...new Set([...seenQuestions, questions[index].question])]
+                seenQuestions: [...new Set([...seenQuestions, quizData.questions[index].question])]
             };
         });
     };
@@ -36,7 +32,7 @@ export default function Sidebar({ questions }: SidebarProps) {
                         }
                     `}
                 </style>
-                {questions.map((question: any, index: number) => (
+                {quizData?.questions.map((question: any, index: number) => (
                     <div key={index} className="w-full flex items-center justify-center">
                         <button
                             onClick={() => handleQuestionClick(index)}
@@ -61,7 +57,7 @@ export default function Sidebar({ questions }: SidebarProps) {
                                 <span
                                     onClick={() => handleQuestionClick(index)} 
                                     className='flex items-center justify-center font-normal text-sm p-1 rounded-lg bg-gray-200 text-black m-1 w-56 cursor-pointer'
-                                >{question.question.slice(0,40)}</span>
+                                >{question.question.slice(0,40)}...</span>
                                 <span
                                     onClick={() => handleQuestionClick(index)}
                                     className={`flex text-sm px-1 py-2 rounded-lg w-16 items-center justify-center cursor-pointer

@@ -1,17 +1,27 @@
 "use client";
-import {useState} from "react";
+import {useState,useEffect} from "react";
 import Navbar from "../../../components/ui/Navbar";
 import {useQuiz} from "../../../useContext/useContext";
 import {useRouter} from "next/navigation";
 
 export default function Instructions() {
     const router = useRouter();
-    const {startCountdown} = useQuiz();
+    const {startCountdown, quizData, setQuizData} = useQuiz();
 
     function handleStartQuiz() {
         startCountdown(1800);
+        setQuizData((prev) => ({...prev, hasStarted: true}));
         router.push("/Quiz");
     }
+
+    useEffect(() => {
+        if(quizData.hasStarted) {
+            router.push("/Quiz");
+        }
+        if(quizData.hasSubmitted) {
+            router.push("/Results");
+        }
+    }, [router, quizData.hasStarted]);
 
     return (
         <>

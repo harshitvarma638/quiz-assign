@@ -5,6 +5,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface quizData {
     name: string;
     email: string;
+    questions: any[];
+    hasStarted: boolean;
+    hasSubmitted: boolean;
     selectedAnswers: {question: string; selectedOption: string}[];
     seenQuestions: string[];
     currentQuestion: number;
@@ -14,6 +17,7 @@ interface quizContextType {
     quizData: quizData;
     setQuizData: React.Dispatch<React.SetStateAction<quizData>>;
     timeLeft: number;
+    setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
     startCountdown: (duration: number) => void;
     setCurrentQuestion: (index: number) => void;
 }
@@ -27,7 +31,7 @@ const quizContext = createContext<quizContextType | undefined>(undefined);
 export const QuizProvider: React.FC<quizProviderProps> = ({ children}) => {
     const [quizData, setQuizData] = useState<quizData>(() =>{
         const data = window.localStorage.getItem("quizData");
-        return data ? JSON.parse(data) : {name: "", email: "", selectedAnswers: [], currentQuestion: 0, seenQuestions: []};
+        return data ? JSON.parse(data) : {name: "", email: "", questions: [], hasStarted: false, hasSubmitted: false,selectedAnswers: [], currentQuestion: 0, seenQuestions: []};
     });
 
     const [timeLeft, setTimeLeft] = useState<number>(() => {
@@ -84,7 +88,7 @@ export const QuizProvider: React.FC<quizProviderProps> = ({ children}) => {
     }
 
     return (
-        <quizContext.Provider value={{quizData, setQuizData, timeLeft, startCountdown, setCurrentQuestion}}>
+        <quizContext.Provider value={{quizData, setQuizData, timeLeft, startCountdown, setCurrentQuestion, setTimeLeft}}>
             {children}
         </quizContext.Provider>
     );

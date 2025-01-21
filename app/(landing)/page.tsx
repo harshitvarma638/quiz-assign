@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useQuiz } from "@/useContext/useContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -10,13 +10,19 @@ export default function Home() {
   const router = useRouter();
   const { quizData , setQuizData } = useQuiz();
 
+  useEffect(() => {
+    if(quizData.hasStarted) {
+      router.push('/Quiz');
+    }
+  }, [router, quizData.hasStarted]);
+
   const handleSubmit = () => {
     if(!validateEmail(email)) {
       alert("Please enter a valid email address");
       return;
     }
 
-    setQuizData({name, email, selectedAnswers: [], currentQuestion: 0, seenQuestions: []});
+    setQuizData({name, email,questions: [],hasStarted: false, hasSubmitted: false, selectedAnswers: [], currentQuestion: 0, seenQuestions: []});
     console.log(quizData);
     router.push('/Instructions');
   }
