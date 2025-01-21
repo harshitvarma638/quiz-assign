@@ -34,10 +34,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <div className="grid grid-cols-2 gap-2 h-screen w-screen">
-        <div className="col-span-1 flex flex-col items-center justify-center text-4xl">
-          <Image src="/quiz.png" alt="Quiz Image" width={500} height={500}/>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 h-screen w-screen">
+        <div className="hidden md:flex col-span-1 flex-col items-center justify-center text-4xl">
+          <Image src="/quiz.png" alt="Quiz Image" width={500} height={500} />
         </div>
+
         <div className="col-span-1 flex items-center justify-center h-screen">
           <div className="flex flex-col p-6 rounded-lg shadow-md w-96 bg-[#eef3fc] justify-center">
             <h2 className="text-2xl font-bold mb-4 text-center">Enter Details</h2>
@@ -48,7 +49,9 @@ export default function Home() {
               }}
             >
               <div className="flex flex-col mb-4 align-start">
-                <label className="mb-2 block font-medium text-xl text-" htmlFor="name">Name:</label>
+                <label className="mb-2 block font-medium text-xl" htmlFor="name">
+                  Name:
+                </label>
                 <input
                   type="text"
                   id="name"
@@ -59,19 +62,18 @@ export default function Home() {
                 />
               </div>
               <div className="flex flex-col mb-4 align-start">
-                <label className="mb-2 block font-medium text-xl text-" htmlFor="name">Email:</label>
+                <label className="mb-2 block font-medium text-xl" htmlFor="email">
+                  Email:
+                </label>
                 <input
                   type="email"
                   id="email"
-                  name="name"
+                  name="email"
                   onChange={(e) => setEmail(e.target.value)}
                   className="p-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <button
-                type="submit"
-                className="w-full py-2 px-4 bg-[#243e8e] text-white font-medium text-xl rounded-lg"
-              >
+              <button type="submit" className="w-full py-2 px-4 bg-[#243e8e] text-white font-medium text-xl rounded-lg">
                 Start the quiz
               </button>
             </form>
@@ -79,5 +81,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+  );  
 }

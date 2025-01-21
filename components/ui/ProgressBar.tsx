@@ -6,10 +6,16 @@ const CircularProgressBar = ({ score, total, color, label }: any) => {
   const progress = (score / total) * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center mb-4 border-2 rounded-lg p-4">
-      <p className="font-semibold mb-2">{label}</p>
+    <div className="flex flex-col items-center justify-center mb-4 border-2 rounded-lg p-2 sm:p-4">
+      <p className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">{label}</p>
       <div className="relative">
-        <svg width="120" height="120">
+        <svg 
+          width="90" 
+          height="90" 
+          className="w-[90px] h-[90px] sm:w-[120px] sm:h-[120px]"
+          viewBox="0 0 120 120" 
+          preserveAspectRatio="xMidYMid meet"
+        >
           <circle
             cx="60"
             cy="60"
@@ -40,7 +46,7 @@ const CircularProgressBar = ({ score, total, color, label }: any) => {
             stroke="black"
             strokeWidth="1px"
             dy=".3em"
-            className="font-medium text-xl"
+            className="text-base sm:text-xl font-medium"
           >
             {score}/{total}
           </text>
