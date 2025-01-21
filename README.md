@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Deployement Link - https://quiz-assign-gamma.vercel.app/
 
-## Getting Started
 
-First, run the development server:
+Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This is a comprehensive quiz application where users can join by entering their name and email address. The quiz answers are securely saved in local storage, ensuring they are safe and accessible even after refreshing the page. The app employs React Context for managing global state, allowing for smooth data flow between components.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The user interface, inspired by HackerEarth, is crafted to be smooth, intuitive, and easy to navigate. Framer Motion is used to create elegant transitions, enhancing the visual appeal and providing a polished experience.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Before taking the quiz, users see a dedicated instructions page to clarify the process. Additionally, a double confirmation step is included for the submit button to avoid accidental submissions, improving the application's reliability.The results page is straightforward, enabling users to review their answers alongside the correct responses for each question.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Why Next.js - Both frontend and backend can be handles from same repository and easy and better routing.
 
-## Learn More
+components built
+1 - timer component
+2 - sidebar component
+3 - quiz component
 
-To learn more about Next.js, take a look at the following resources:
+Installation
+1 - npm run build - to install the necessary packages and dependencies
+2 - npm run dev - to run the project and open http://localhost:3000
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Assumptions Made
+- This is a test environment and user cannot open other routes untill the quiz is completed.
+- The quiz responses are to be persistent as after every refresh the question set is changing.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Challenges Faced
+- After every page refresh new API response is generated so I used local storage and useContext to get persistent storage and localStorage will be cleared once go home button is clicked after completing the quiz.
+- The marking of seen, attempted was tough as I thought of using non-persistent method but later used the exisitng useContext and added
+seenQuestions to mark the viewed questions by the user.
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
