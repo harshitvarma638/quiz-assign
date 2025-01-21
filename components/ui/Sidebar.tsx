@@ -12,6 +12,7 @@ export default function Sidebar() {
 
     const handleQuestionClick = (index: number) => {
         setCurrentQuestion(index);
+        setOpen(false);
         setQuizData((prev) => {
             const seenQuestions = Array.isArray(quizData.seenQuestions) ? quizData.seenQuestions : [];
             return {
