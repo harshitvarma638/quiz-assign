@@ -136,7 +136,7 @@ export default function Results() {
                   )}
                 </div>
               </div>
-              <div className="mt-2" style={{ width: 'fit-content', minWidth: '25%' }}>
+              <div className="mt-2 sm:w-fit" style={{ width: 'fit-content', minWidth: '25%' }}>
                 {questionWithShuffledOptions?.shuffledOptions.map((opt: any, i: any) => {
                   const isSelected = opt.option === selectedAnswer?.selectedOption;
                   const isCorrect = opt.isCorrect;
