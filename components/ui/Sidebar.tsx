@@ -22,7 +22,7 @@ export default function Sidebar() {
     };
 
     return (
-        <div className={`${open ? "w-96" : "w-16"} h-screen border-r border-gray-200 bg-white fixed left-0 flex flex-col transition-width duration-300`}>
+        <div className={`${open ? "w-96" : "w-16"} h-screen border-r border-gray-200 bg-white fixed left-0 flex flex-col transition-width duration-300 z-50`}>
             <div className="flex-none flex items-center justify-center p-4 border-b border-gray-200">
                 <button onClick={() => setOpen((prev) => !prev)}>
                     {open ? <X size={24}/> : <Menu size={24} />}

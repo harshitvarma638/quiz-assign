@@ -189,7 +189,7 @@ export default function Quiz() {
                                 </h2>
                             </div>
                         </div>
-                        <div className="space-y-2" style={{ width: 'fit-content', minWidth: '25%' }}>
+                        <div className="mt-2 sm:w-1/4 w-full space-y-4">
                           {options.map((option, index) => (
                             <label
                               key={option}

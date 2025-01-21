@@ -136,12 +136,12 @@ export default function Results() {
                   )}
                 </div>
               </div>
-              <div className="mt-2 sm:w-fit" style={{ width: 'fit-content', minWidth: '25%' }}>
+              <div className="mt-2 sm:w-1/4 w-full space-y-4">
                 {questionWithShuffledOptions?.shuffledOptions.map((opt: any, i: any) => {
                   const isSelected = opt.option === selectedAnswer?.selectedOption;
                   const isCorrect = opt.isCorrect;
                   const isIncorrect = isSelected && !isCorrect;
-  
+
                   return (
                     <label
                       key={opt.option}
@@ -164,10 +164,15 @@ export default function Results() {
                           : undefined,
                       }}
                     >
-                      <span className="flex items-center text-sm font-medium px-2 h-6 border-[1px] bg-white rounded-sm" style={{ color: "#243e8e", borderColor: "#243e8e" }}>
+                      <span
+                        className="flex items-center text-sm font-medium px-2 h-6 border-[1px] bg-white rounded-sm"
+                        style={{ color: "#243e8e", borderColor: "#243e8e" }}
+                      >
                         {String.fromCharCode(65 + i)}
                       </span>
-                      <span className="text-md items-center w-full font-medium">{opt.option}</span>
+                      <span className="text-md items-center w-full font-medium">
+                        {opt.option}
+                      </span>
                       <div className="flex relative">
                         <input
                           type="radio"
@@ -177,8 +182,12 @@ export default function Results() {
                           className="appearance-none w-5 h-5 rounded-full focus:outline-none"
                           disabled
                         />
-                        {isCorrect && <Check size={20} className="absolute top-0 left-0 text-green-500" />}
-                        {isIncorrect && <X size={20} className="absolute top-0 left-0 text-red-500" />}
+                        {isCorrect && (
+                          <Check size={20} className="absolute top-0 left-0 text-green-500" />
+                        )}
+                        {isIncorrect && (
+                          <X size={20} className="absolute top-0 left-0 text-red-500" />
+                        )}
                       </div>
                     </label>
                   );
